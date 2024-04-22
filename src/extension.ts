@@ -27,8 +27,9 @@ export function activate(context: ExtensionContext) {
       .update("enableCodeLens", false, true);
   });
 
-  commands.registerCommand("codelens.codelensAction", (args: any) => {
-    window.showInformationMessage(`CodeLens action clicked with args=${args}`);
+  commands.registerCommand("codelens.codelensAction", (a, b) => {
+    console.log(a, b);
+    window.showInformationMessage(`CodeLens action clicked with args=${a}`);
   });
 }
 

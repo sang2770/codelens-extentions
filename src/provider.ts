@@ -5,8 +5,7 @@ export class CodelensProvider implements vscode.CodeLensProvider {
   private regex: RegExp;
   private _onDidChangeCodeLenses: vscode.EventEmitter<void> =
     new vscode.EventEmitter<void>();
-  onDidChangeCodeLenses?: vscode.Event<void> =
-    this._onDidChangeCodeLenses.event;
+  onDidChangeCodeLenses: vscode.Event<void> = this._onDidChangeCodeLenses.event;
 
   constructor() {
     this.regex = /^[-=+@;]/gm;
@@ -37,34 +36,30 @@ export class CodelensProvider implements vscode.CodeLensProvider {
         // const word = line.text.split(" ").at(0);
         if (range) {
           const word = document.getText(range);
-          this.codeLenses.push(
-            new vscode.CodeLens(range, {
-              title: `Text start with special char: ${word}`,
-              command: "codelens.codelensAction",
-              arguments: [word, true],
-            })
-          );
+          this.codeLenses.push(new vscode.CodeLens(range));
         }
       }
       return this.codeLenses;
     }
   }
-  resolveCodeLens?(
+  resolveCodeLens(
     codeLens: vscode.CodeLens,
     token: vscode.CancellationToken
   ): vscode.ProviderResult<vscode.CodeLens> {
+    const document = vscode.window.activeTextEditor?.document;
+    if (!document) {
+      return codeLens;
+    }
+    const word = document.getText(codeLens.range);
     if (
       vscode.workspace.getConfiguration("codelens").get("enableCodeLens", true)
     ) {
-      console.log(codeLens);
-      //   codeLens.command = {
-      //     title: "Codelens provided by sample extension",
-      //     tooltip: "Tooltip provided by sample extension",
-      //     command: "codelens.codelensAction",
-      //     arguments: ["Argument 1", false],
-      //   };
-      return codeLens;
+      codeLens.command = {
+        title: `Text start with special char: ${word}`,
+        command: "codelens.codelensAction",
+        arguments: ["sang dzai", "xxxx"],
+      } as vscode.Command;
     }
-    return null;
+    return codeLens;
   }
 }
